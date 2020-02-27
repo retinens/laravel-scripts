@@ -1,0 +1,15 @@
+#!/bin/bash
+if [ -z $GH_TOKEN ]; then
+  echo -e "You'll need an access to the github API\n"
+  echo -e "Go to this url, check the first box"
+  echo "Check the first box, hit 'Generate token' and copy the token"
+  echo -e "https://github.com/settings/tokens/new?description=retinens-scripts"
+  echo -e "Github access token ?"
+  read github_token
+  export GH_TOKEN=$github_token
+  echo "export GH_TOKEN=$github_token" >>~/.bashrc
+fi
+##bb117d5ac4c634f3e3b502b298acf5c85578141e
+
+#echo -e "\e[32mCreating now a repository on github\e[0m"
+
