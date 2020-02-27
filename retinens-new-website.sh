@@ -1,4 +1,9 @@
+#!/bin/bash
 set -e
+
+RETINENS_SCRIPTS_FOLDER=$(cd `dirname $0` && pwd)
+
+$RETINENS_SCRIPTS_FOLDER/check-updates.sh
 
 echo "\e[33mRETINENS WEB\e[0m"
 
