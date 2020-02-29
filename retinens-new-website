@@ -33,14 +33,21 @@ fi
 echo -e "\n\e[32mInstalling Laravel\e[0m in $projectname"
 composer create-project laravel/laravel "$projectname" --quiet
 cd "$projectname"
+echo "$projectname" > README.md
 
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel (SEOTools & laravel-cookie-consent)"
 composer require artesaos/seotools spatie/laravel-cookie-consent --quiet
-php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider"
+php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider" --quiet
 
 echo -e "Installing \e[32mLaravel UI\e[0m & \e[32mBootstrap \e[0m"
 composer require laravel/ui --quiet
 php artisan ui bootstrap --quiet
+
+echo -e "<?php
+
+Route::get('/', function () {
+    return view('pages.home'); 
+})->name('home');" > routes/web.php
 
 echo -e "Setting up \e[32msass\e[0m boilerplate"
 mkdir resources/app

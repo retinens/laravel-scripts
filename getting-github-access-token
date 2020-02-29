@@ -9,7 +9,3 @@ if [ -z $GH_TOKEN ]; then
   export GH_TOKEN=$github_token
   echo "export GH_TOKEN=$github_token" >>~/.bashrc
 fi
-##bb117d5ac4c634f3e3b502b298acf5c85578141e
-
-#echo -e "\e[32mCreating now a repository on github\e[0m"
-
