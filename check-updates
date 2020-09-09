@@ -1,7 +1,8 @@
 #!/bin/bash
-echo $RETINENS_SCRIPTS_FOLDER
-#git update-index -q --refresh
-#if ! git diff-index --quiet HEAD --; then
-#  echo "Updating the script"
-#  git pull
-#fi
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd $DIR
+git update-index -q --refresh
+if ! git diff-index --quiet HEAD --; then
+  echo "Updating the script"
+  git pull
+fi
