@@ -1,0 +1,61 @@
+#!/bin/bash -i
+RETINENS_SCRIPTS_FOLDER=$(cd $(dirname $0) && pwd)
+
+$RETINENS_SCRIPTS_FOLDER/check-updates
+
+echo -e "\e[33m
+  _____  ______ _______ _____ _   _ ______ _   _  _____
+ |  __ \|  ____|__   __|_   _| \ | |  ____| \ | |/ ____|
+ | |__) | |__     | |    | | |  \| | |__  |  \| | (___
+ |  _  /|  __|    | |    | | | . \` |  __| | . \` |\___ \\
+ | | \ \| |____   | |   _| |_| |\  | |____| |\  |____) |
+ |_|  \_\______|  |_|  |_____|_| \_|______|_| \_|_____/
+\e[0m"
+#Github access token
+source ~/.bashrc
+if [ -z "$GH_TOKEN" ] || [ -z "$GH_USER" ]; then
+  echo -e "\e[32m Setting up Github access token\e[0m"
+  source "$RETINENS_SCRIPTS_FOLDER"/getting-github-access-token
+fi
+
+
+#project name
+echo -e "Cloning \e[33mLaravel\e[0m project script\n"
+echo -e "Project name (from github) ?"
+read projectname
+
+#check if directory exists
+if [ -d "$projectname" ]; then
+  echo -e "\e[31mERROR \e[0m: $projectname directory already exists."
+  exit
+fi
+
+git clone --quiet git@github.com:retinens/"$projectname".git  "$projectname" > /dev/null
+
+cd "$projectname" || exit
+git flow init -d
+composer install --quiet
+
+cp .env.example .env
+
+php artisan key:generate --quiet
+#php artisan migrate:fresh --seed
+npm install -s --no-warnings
+
+valet db:create "$projectname" --silent
+
+echo -e "Setting up valet"
+valet secure
+#php artisan migrate:fresh --seed
+
+
+echo -e "\n\e[33m== ENV FILE VARIABLES ==\e[0m"
+echo -e "Don't forget to add this database variables in you .env file:\n"
+echo -e "DB_DATABASE=$projectname"
+echo -e "DB_USERNAME=root"
+echo -e "DB_PASSWORD=root\n"
+echo -e "Don't forget to add this mail variables in you .env file:\n"
+echo -e "MAIL_HOST=0.0.0.0"
+echo -e "MAIL_PORT=1025"
+
+exit
