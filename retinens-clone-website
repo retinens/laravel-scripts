@@ -42,7 +42,7 @@ php artisan key:generate --quiet
 #php artisan migrate:fresh --seed
 npm install -s --no-warnings
 
-valet db:create "$projectname" --silent
+valet db:create "$projectname"
 
 echo -e "Setting up valet"
 valet secure

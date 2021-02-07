@@ -97,10 +97,8 @@ git add .
 git commit -m "First commit" --quiet
 
 echo -e "\e[32mCreating now a repository on github\e[0m"
-gitUrl=$(curl -u $GH_USER:$GH_TOKEN POST https://api.github.com/orgs/retinens/repos --data '{"name":"'"$projectname"'","private":"true"}' | jq -r .ssh_url)
 
-git remote add origin "$gitUrl"
-git push --set-upstream origin develop
+gh repo create retinens/"$projectname" -y --public
 
 echo -e "Setting up valet"
 valet secure
