@@ -1,15 +1,17 @@
 #!/bin/bash -i
 RETINENS_SCRIPTS_FOLDER=$(cd $(dirname $0) && pwd)
+source $RETINENS_SCRIPTS_FOLDER/dotenv
 
 $RETINENS_SCRIPTS_FOLDER/check-updates
 
 echo -e "\e[33m
-██████  ███████ ████████ ██ ███    ██ ███████ ███    ██ ███████ 
-██   ██ ██         ██    ██ ████   ██ ██      ████   ██ ██      
-██████  █████      ██    ██ ██ ██  ██ █████   ██ ██  ██ ███████ 
-██   ██ ██         ██    ██ ██  ██ ██ ██      ██  ██ ██      ██ 
+██████  ███████ ████████ ██ ███    ██ ███████ ███    ██ ███████
+██   ██ ██         ██    ██ ████   ██ ██      ████   ██ ██
+██████  █████      ██    ██ ██ ██  ██ █████   ██ ██  ██ ███████
+██   ██ ██         ██    ██ ██  ██ ██ ██      ██  ██ ██      ██
 ██   ██ ███████    ██    ██ ██   ████ ███████ ██   ████ ███████
 \e[0m"
+
 
 #project name
 echo -e "New \e[33mLaravel\e[0m project script\n"
@@ -94,6 +96,17 @@ echo -e "\e[32mCreating now a repository on github\e[0m"
 
 gh repo create retinens/"$projectname" -y --private
 git push origin develop --set-upstream
+
+echo -e "Setting up your .env file"
+
+.env set MAIL_HOST="0.0.0.0"
+.env set MAIL_PORT="1025"
+.env set DB_DATABASE="$projectname"
+.env set DB_USERNAME="root"
+.env set DB_PASSWORD="root"
+.env set EMAIL_FROM="test@"$projectname.".test"
+.env set APP_URL="https://".$projectname.".test"
+
 echo -e "Setting up valet"
 valet secure
 valet open
