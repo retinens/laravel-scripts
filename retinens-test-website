@@ -16,17 +16,8 @@ echo -e "New \e[33mLaravel\e[0m project script\n"
 echo -e "Project name ?"
 read projectname
 
-#check if directory exists
-if [ -d "$projectname" ]; then
-  echo "\e[31mERROR \e[0m: $projectname directory already exists."
-  exit
-fi
 
-#creates laravel project
-echo -e "\n\e[32mInstalling Laravel\e[0m in $projectname"
-composer create-project laravel/laravel "$projectname" --quiet
 cd "$projectname" || exit
-echo "$projectname" > README.md
 
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel (SEOTools & laravel-cookie-consent)"
 composer require artesaos/seotools spatie/laravel-cookie-consent --quiet

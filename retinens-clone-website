@@ -23,7 +23,7 @@ if [ -d "$projectname" ]; then
   exit
 fi
 
-gh repo clone retinens/"$projectname" "$projectname" > /dev/null
+gh repo clone retinens/"$projectname" > /dev/null
 
 cd "$projectname" || exit
 git flow init -d
