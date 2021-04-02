@@ -1,4 +1,4 @@
-#!/bin/bash -i
+#!/bin/bash
 RETINENS_SCRIPTS_FOLDER=$(cd $(dirname $0) && pwd)
 source $RETINENS_SCRIPTS_FOLDER/dotenv
 

@@ -1,10 +1,9 @@
-#!/bin/bash -i
+#!/bin/bash
 RETINENS_SCRIPTS_FOLDER=$(cd $(dirname $0) && pwd)
 
 $RETINENS_SCRIPTS_FOLDER/check-updates
-source $RETINENS_SCRIPTS_FOLDER/dotenv
 
-echo -e "\e[33m
+echo -e "\e[32m
   _____  ______ _______ _____ _   _ ______ _   _  _____
  |  __ \|  ____|__   __|_   _| \ | |  ____| \ | |/ ____|
  | |__) | |__     | |    | | |  \| | |__  |  \| | (___
@@ -14,7 +13,6 @@ echo -e "\e[33m
 \e[0m"
 
 #project name
-echo -e "Cloning \e[33mLaravel\e[0m project script\n"
 echo -e "Project name (from Github) ?"
 read projectname
 
@@ -28,18 +26,19 @@ gh repo clone retinens/"$projectname" > /dev/null
 
 cd "$projectname" || exit
 git flow init -d
+
 composer install --quiet
 
 cp .env.example .env
-
 php artisan key:generate --quiet
 #php artisan migrate:fresh --seed
 npm install -s --no-warnings
 
-valet db:create "$projectname"
+valet db:create "$projectname" --quiet
 
-echo -e "Setting up your .env file"
+echo -e "\e[32mSetting up your .env file\e[0m"
 
+source $RETINENS_SCRIPTS_FOLDER/dotenv
 .env set MAIL_HOST="0.0.0.0"
 .env set MAIL_PORT="1025"
 .env set MAIL_FROM="test@"$projectname.".test"
