@@ -31,7 +31,7 @@ cd "$projectname" || exit
 echo "$projectname" > README.md
 
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel (SEOTools & laravel-cookie-consent)"
-composer require artesaos/seotools spatie/laravel-cookie-consent --quiet
+composer require artesaos/seotools spatie/laravel-cookie-consent livewire/livewire --quiet
 php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider" --quiet
 
 echo -e "Installing \e[32mLaravel UI\e[0m & \e[32mBootstrap \e[0m"
@@ -79,6 +79,8 @@ mix.js('resources/app/js/app.js', 'public/app/js').extract().mergeManifest();
     mix.sass('resources/app/sass/app.scss', 'public/app/css');" >webpack.mix.js
 
 echo -e "Compiling assets"
+npm install bootstrap@latest @popperjs/core --save-dev
+npm install bootstrap @popperjs/core --save-dev
 npm add laravel-mix-merge-manifest vue-template-compiler browser-sync browser-sync-webpack-plugin --save
 npm install
 npm run dev
