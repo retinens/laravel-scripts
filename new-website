@@ -83,6 +83,7 @@ npm install bootstrap@latest @popperjs/core --save-dev
 npm install bootstrap @popperjs/core --save-dev
 npm add laravel-mix-merge-manifest vue-template-compiler browser-sync browser-sync-webpack-plugin --save
 npm install
+npm install resolve-url-loader@^4.0.0 --save-dev
 npm run dev
 npm run dev
 
