@@ -12,7 +12,6 @@ echo -e "\e[33m
 ██   ██ ███████    ██    ██ ██   ████ ███████ ██   ████ ███████
 \e[0m"
 
-
 #project name
 echo -e "New \e[33mLaravel\e[0m project script\n"
 echo -e "Project name ?"
@@ -28,18 +27,18 @@ fi
 echo -e "\n\e[32mInstalling Laravel\e[0m in $projectname"
 composer create-project laravel/laravel "$projectname" --quiet
 cd "$projectname" || exit
-echo "$projectname" > README.md
+echo "$projectname" >README.md
 
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel (SEOTools & laravel-cookie-consent)"
-composer require artesaos/seotools livewire/livewire  --quiet
+composer require artesaos/seotools livewire/livewire doctrine/dbal --quiet
 php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider" --quiet
 
 composer require laravel-lang/publisher laravel-lang/lang --dev --quiet
 php artisan lang:add fr
 
-composer require friendsofphp/php-cs-fixer nunomaduro/larastan --dev
-composer require league/flysystem-aws-s3-v3 "~1.0"
-composer require sammyjo20/lasso
+composer require friendsofphp/php-cs-fixer nunomaduro/larastan --dev --quiet
+composer require league/flysystem-aws-s3-v3 "~1.0" --quiet
+composer require sammyjo20/lasso --quiet
 
 php artisan vendor:publish --tag=lasso-config
 
@@ -54,7 +53,7 @@ echo -e "<?php
 
 Route::get('/', function () {
     return view('app.pages.website.home');
-})->name('home');" > routes/web.php
+})->name('home');" >routes/web.php
 
 mkdir domain
 php "$RETINENS_SCRIPTS_FOLDER/updateComposerPSR4.php"
@@ -133,14 +132,14 @@ echo -e "Setting up git repo"
 git init
 git flow init -d
 
-echo "/public/app/" >> .gitignore
-echo "/public/backend/" >> .gitignore
-echo "/public/fonts/vendor" >> .gitignore
-echo "/public/images/vendor" >> .gitignore
-echo "/public/mix-manifest.json" >> .gitignore
-echo "/.php\_cs.cache" >> .gitignore
-echo "/.lasso" >> .gitignore
-echo ".php-cs-fixer.cache" >> .gitignore
+echo "/public/app/" >>.gitignore
+echo "/public/backend/" >>.gitignore
+echo "/public/fonts/vendor" >>.gitignore
+echo "/public/images/vendor" >>.gitignore
+echo "/public/mix-manifest.json" >>.gitignore
+echo "/.php\_cs.cache" >>.gitignore
+echo "/.lasso" >>.gitignore
+echo ".php-cs-fixer.cache" >>.gitignore
 
 git add .
 git commit -m "Laravel Project Setup" --quiet
