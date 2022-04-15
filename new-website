@@ -31,8 +31,20 @@ cd "$projectname" || exit
 echo "$projectname" > README.md
 
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel (SEOTools & laravel-cookie-consent)"
-composer require artesaos/seotools spatie/laravel-cookie-consent livewire/livewire --quiet
+composer require artesaos/seotools livewire/livewire  --quiet
 php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider" --quiet
+
+composer require laravel-lang/publisher laravel-lang/lang --dev --quiet
+php artisan lang:add fr
+
+composer require friendsofphp/php-cs-fixer nunomaduro/larastan --dev
+composer require league/flysystem-aws-s3-v3 "~1.0"
+composer require sammyjo20/lasso
+
+php artisan vendor:publish --tag=lasso-config
+
+git clone --depth=1 https://github.com/retinens/laravel-retinens-base-files tmp --quiet
+mv tmp/2022_04_15_104321_update_users_table.php database/migrations/
 
 echo -e "Installing \e[32mLaravel UI\e[0m & \e[32mBootstrap \e[0m"
 composer require laravel/ui --quiet
@@ -41,27 +53,39 @@ php artisan ui bootstrap --quiet
 echo -e "<?php
 
 Route::get('/', function () {
-    return view('app.pages.home');
+    return view('app.pages.website.home');
 })->name('home');" > routes/web.php
+
+mkdir domain
+php "$RETINENS_SCRIPTS_FOLDER/updateComposerPSR4.php"
 
 echo -e "Setting up \e[32msass\e[0m boilerplate"
 mkdir resources/app
-mv resources/js resources/app
+rm resources/css -rf
+rm resources/js -rf
 rm resources/sass -rf
 #getting sass boilerplate
-git clone --depth=1 git://github.com/retinens/laravel-sass-boilerplate resources/app/sass --quiet && rm resources/app/sass/.git -rf
+git clone --depth=1 https://github.com/retinens/laravel-app-assets-boilerplate resources/app --quiet
+rm resources/app/.git -rf
+rm resources/app/.gitignore -rf
+
+git clone --depth=1 https://github.com/retinens/laravel-admin-assets-boilerplate resources/admin --quiet
+rm resources/admin/.git -rf
+rm resources/admin/.gitignore -rf
 
 echo -e "Setting up \e[32mviews\e[0m boilerplate"
-
 rm resources/views -rf
 #getting views boiler plate
-git clone --depth=1 git://github.com/retinens/laravel-views-boilerplate resources/views --quiet && rm resources/views/.git -rf
+git clone --depth=1 https://github.com/retinens/laravel-views-boilerplate resources/views --quiet
+rm resources/views/.git -rf
+rm resources/views/.gitignore -rf
+
+mv lang resources/lang
 
 echo -e "Editing\e[32m webpack.mix.js\e[0m to work with our boilerplate and setting up \e[32mbrowser-sync\e[0m"
 
 echo "
 const mix = require('laravel-mix');
-require('laravel-mix-merge-manifest');
 
 const domain = '$projectname.test'; 
 const homedir = require('os').homedir();
@@ -75,13 +99,30 @@ mix.browserSync({
     },
 });
 
-mix.js('resources/app/js/app.js', 'public/app/js').extract().mergeManifest();
-    mix.sass('resources/app/sass/app.scss', 'public/app/css');" >webpack.mix.js
+    if (['admin'].includes(process.env.npm_config_section)) {
+        mix
+            .setPublicPath('public/backend')
+            .js('./resources/admin/js/admin.js', 'js')
+            .extract()
+            .sass('./resources/admin/sass/admin.scss', 'css')
+            .version();
+    } else {
+        mix
+            .setPublicPath('public/app')
+            .js('./resources/app/js/app.js', 'js')
+            .extract()
+            .copyDirectory('./resources/app/tarteaucitron','./public/app/js')
+            .sass('./resources/app/sass/app.scss', 'css')
+            .version();
+    }
+
+    " >webpack.mix.js
 
 echo -e "Compiling assets"
-npm install bootstrap@latest @popperjs/core --save-dev
-npm install bootstrap @popperjs/core --save-dev
-npm add laravel-mix-merge-manifest vue-template-compiler browser-sync browser-sync-webpack-plugin --save
+npm install bootstrap @popperjs/core jquery popper.js --save-dev
+npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 jquery-validation select2 select2-bootstrap-5-theme sweetalert moment
+
+npm add vue-template-compiler browser-sync browser-sync-webpack-plugin wowjs lozad --save
 npm install
 npm install resolve-url-loader@^4.0.0 --save-dev
 npm run dev
@@ -91,9 +132,18 @@ echo -e "Setting up git repo"
 
 git init
 git flow init -d
-echo "/.idea" >>.gitignore
+
+echo "/public/app/" >> .gitignore
+echo "/public/backend/" >> .gitignore
+echo "/public/fonts/vendor" >> .gitignore
+echo "/public/images/vendor" >> .gitignore
+echo "/public/mix-manifest.json" >> .gitignore
+echo "/.php\_cs.cache" >> .gitignore
+echo "/.lasso" >> .gitignore
+echo ".php-cs-fixer.cache" >> .gitignore
+
 git add .
-git commit -m "First commit" --quiet
+git commit -m "Laravel Project Setup" --quiet
 
 echo -e "\e[32mCreating now a repository on github\e[0m"
 
@@ -110,7 +160,11 @@ echo -e "Setting up your .env file"
 .env set DB_PASSWORD="root"
 .env set APP_URL="https://""$projectname"".test"
 
+rm tmp -rf
+
 echo -e "Setting up valet"
+valet db:create
+php artisan migrate
 valet secure
 valet open
 exit
