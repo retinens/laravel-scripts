@@ -119,9 +119,9 @@ mix.browserSync({
 
 echo -e "Compiling assets"
 npm install bootstrap @popperjs/core jquery popper.js --save-dev
-npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 jquery-validation select2 select2-bootstrap-5-theme sweetalert moment
+npm install @themesberg/volt-bootstrap-5-dashboard datatables.net lozad wowjs datatables.net-bs5 jquery-validation select2 select2-bootstrap-5-theme sweetalert moment --save
 
-npm add vue-template-compiler browser-sync browser-sync-webpack-plugin wowjs lozad --save
+npm add vue-template-compiler browser-sync browser-sync-webpack-plugin   --save
 npm install
 npm install resolve-url-loader@^4.0.0 --save-dev
 npm run dev
