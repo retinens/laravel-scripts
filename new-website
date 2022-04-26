@@ -30,7 +30,7 @@ cd "$projectname" || exit
 echo "$projectname" >README.md
 
 mkdir domain
-mkdit app/Common
+mkdir app/Common
 mkdir app/Common/Controllers
 mkdir domain/Users/
 mkdir domain/Users/Models/
@@ -140,7 +140,7 @@ mix.browserSync({
 
 echo -e "Compiling assets"
 npm install bootstrap @popperjs/core jquery popper.js --save-dev
-npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 jquery-validation select2 select2-bootstrap-5-theme sweetalert moment wowjs lozad trix
+npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 jquery-validation select2 select2-bootstrap-5-theme sweetalert moment wowjs lozad trix toastr tempusdominus-bootstrap-4 --save
 
 npm add vue-template-compiler browser-sync browser-sync-webpack-plugin --save
 npm install
