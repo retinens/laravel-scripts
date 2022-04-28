@@ -169,7 +169,8 @@ git commit -m "Laravel Project Setup" --quiet
 
 echo -e "\e[32mCreating now a repository on github\e[0m"
 
-gh repo create retinens/"$projectname" -y --private
+gh repo create retinens/"$projectname" -y --private -enable-issues=false
+git remote add origin https://github.com/retinens/"$projectname".git
 git push origin develop --set-upstream
 
 echo -e "Setting up your .env file"
