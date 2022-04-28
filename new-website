@@ -39,6 +39,8 @@ mkdir app/Auth/Controllers
 mkdir app/Admin
 mkdir app/Admin/Middleware
 mkdir app/Admin/Controllers
+mkdir .github
+mkdir .github/workflows
 
 rm app/Http/Controllers -rf
 rm app/Models -rf
@@ -47,16 +49,13 @@ echo -e "Getting \e[32mbasic libraries\e[0m for Laravel"
 composer require artesaos/seotools livewire/livewire doctrine/dbal rap2hpoutre/laravel-log-viewer --quiet
 php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider" --quiet
 
-composer require laravel-lang/publisher laravel-lang/lang --dev --quiet
+composer require laravel-lang/publisher laravel-lang/lang friendsofphp/php-cs-fixer nunomaduro/larastan --dev --quiet
 php artisan lang:add fr
 
-composer require league/flysystem-aws-s3-v3 "~2.0" --quiet
-composer require sammyjo20/lasso --quiet
-
+composer require league/flysystem-aws-s3-v3 "~3.0" sammyjo20/lasso --quiet
 php artisan vendor:publish --tag=lasso-config
 
 git clone --depth=1 https://github.com/retinens/laravel-retinens-base-files tmp --quiet
-
 
 mv tmp/2022_04_15_104321_update_users_table.php database/migrations/
 mv tmp/DatabaseSeeder.php database/seeders/
@@ -71,6 +70,9 @@ mv tmp/admin/IsAdminMiddleware.php app/Admin/Middleware/
 mv tmp/admin/HomePageController.php app/Admin/Controllers/
 mv tmp/common/Controller.php app/Common/Controllers/Controller.php
 mv tmp/auth/* app/Auth/Controllers/
+
+mv tmp/phpstan.neon ./
+mv tmp/deploy.yml .github/workflows/deploy.yml
 
 
 echo -e "Installing \e[32mLaravel UI\e[0m & \e[32mBootstrap \e[0m"
