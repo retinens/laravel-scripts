@@ -159,8 +159,6 @@ npm install prettier @prettier/plugin-php  --save
 npm add vue-template-compiler browser-sync browser-sync-webpack-plugin --save
 npm install
 npm install resolve-url-loader@^4.0.0 --save-dev
-npm run dev
-npm run dev --section=admin
 
 rm tmp -rf
 
