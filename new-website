@@ -46,7 +46,7 @@ rm app/Http/Controllers -rf
 rm app/Models -rf
 
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel"
-composer require artesaos/seotools livewire/livewire doctrine/dbal rap2hpoutre/laravel-log-viewer --quiet
+composer require artesaos/seotools livewire/livewire doctrine/dbal laravelcollective/html rap2hpoutre/laravel-log-viewer --quiet
 php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider" --quiet
 
 composer require laravel-lang/publisher laravel-lang/lang friendsofphp/php-cs-fixer nunomaduro/larastan --dev --quiet
