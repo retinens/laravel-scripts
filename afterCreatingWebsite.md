@@ -21,13 +21,12 @@
 3. Run `npm remove vite laravel-vite-plugin`
 4. Run `rm vite.config.js`
 5. Run `npm install`
-5. Run `npm run prod-all` to compile everything
+6. Run `npm run prod-all` to compile everything. You may have to run it twice or to run run `npm run install` between two runs.
 
 
-## Prepare lasso config
+## Setup Lasso config
 
-1. In `config/lasso.php`, change the `script` value to `npm run prod-all`'
-2. Add the env variables to the .env file:
+1. Add the env variables to the .env file:
 ```diff
 DIGITALOCEAN_SPACES_KEY=##
 DIGITALOCEAN_SPACES_SECRET=##
@@ -37,7 +36,7 @@ DIGITALOCEAN_SPACES_REGION=ams3
 DIGITALOCEAN_SPACES_BUCKET={bucketName}
 DIGITALOCEAN_ROOT_FOLDER={folderName}
 ```
-3. Add a new item in the filesystems disks in the config file (`config/filesystems.php`):
+2. Add a new item in the filesystems disks in the config file (`config/filesystems.php`):
 ```diff
 'assets' => [
     'driver' => 's3',
@@ -49,3 +48,7 @@ DIGITALOCEAN_ROOT_FOLDER={folderName}
     'endpoint' => env('DIGITALOCEAN_SPACES_ENDPOINT'),
 ],
 ```
+3. Change the {bucketName} in the `.github/workflows/deploy.yml` file (around line 83)
+4. Set the variables (DIGITALOCEAN_SPACES_KEY, DIGITALOCEAN_SPACES_SECRET, DEVELOP_WEBHOOK and PROD_WEBHOOK) in the Github repo so the automatic assets compilation will work.
+
+##
