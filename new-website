@@ -76,6 +76,7 @@ mv tmp/deploy.yml .github/workflows/deploy.yml
 
 sed -i 's/App\\Models\\User/\\Domain\\Users\\Models\\User/g' config/auth.php
 sed -i 's/npm run production/npm run prod-all/g' config/lasso.php
+sed -i 's/home//g' app/Providers/RouteServiceProvider.php
 
 echo -e "Installing \e[32mLaravel UI\e[0m & \e[32mBootstrap \e[0m"
 composer require laravel/ui --quiet
