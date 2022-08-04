@@ -193,4 +193,5 @@ valet db:create
 php artisan migrate
 valet secure
 valet open
+xdg-open https://"$projectname".test
 exit
