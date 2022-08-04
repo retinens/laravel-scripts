@@ -193,5 +193,5 @@ valet db:create
 php artisan migrate
 valet secure
 valet open
-xdg-open https://"$projectname".test
+xdg-open https://github.com/retinens/laravel-scripts/blob/master/afterCreatingWebsite.md
 exit
