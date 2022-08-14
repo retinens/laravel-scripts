@@ -156,7 +156,7 @@ mix.browserSync({
 
 echo -e "Compiling assets"
 npm install bootstrap @popperjs/core jquery popper.js --save-dev
-npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 jquery-validation select2 select2-bootstrap-5-theme sweetalert moment wowjs lozad trix toastr tempusdominus-bootstrap-4 --save
+npm install @themesberg/volt-bootstrap-5-dashboard datatables.net alpinejs datatables.net-bs5 jquery-validation select2 select2-bootstrap-5-theme sweetalert moment wowjs lozad trix toastr tempusdominus-bootstrap-4 --save
 
 npm install prettier @prettier/plugin-php  --save
 
