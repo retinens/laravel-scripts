@@ -26,6 +26,8 @@
 
 ## Setup Lasso config
 
+After creating a new bucket (Space) in DigitalOcean, do the following:
+
 1. Add the env variables to the .env file:
 ```diff
 DIGITALOCEAN_SPACES_KEY=##
