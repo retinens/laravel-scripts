@@ -1,29 +1,5 @@
 # After running the website creation script
 
-
-## Removing Laravel Vite
-1. Go to the website directory and run `npm install --save-dev laravel-mix`
-2. Update your NPM scripts in package.json:
-```diff
-"scripts" : {
-    "dev": "npm run development",
-    "development": "mix",
-    "watch": "mix watch",
-    "watch-poll": "npm run watch -- --watch-poll",
-    "watch-admin": "npm run watch --section=admin ",
-    "hot": "mix watch --hot",
-    "prod": "npm run production",
-    "prod-all": "npm run production && npm run production --section=admin",
-    "dev-all": "npm run dev && npm run dev --section=admin",
-    "production": "mix --production"
-}
-```
-3. Run `npm remove vite laravel-vite-plugin`
-4. Run `rm vite.config.js`
-5. Run `npm install`
-6. Run `npm run prod-all` to compile everything. You may have to run it twice or to run run `npm run install` between two runs.
-
-
 ## Setup Lasso config
 
 After creating a new bucket (Space) in DigitalOcean, do the following:
