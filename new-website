@@ -46,7 +46,7 @@ rm app/Http/Controllers -rf
 rm app/Models -rf
 
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel"
-composer require artesaos/seotools livewire/livewire doctrine/dbal laravelcollective/html spatie/laravel-data rap2hpoutre/laravel-log-viewer --quiet
+composer require artesaos/seotools livewire/livewire doctrine/dbal laravelcollective/html spatie/laravel-data rap2hpoutre/laravel-log-viewer retinens/laravel-toastr --quiet
 php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider" --quiet
 
 composer require laravel-lang/lang nunomaduro/larastan --dev --quiet
@@ -61,7 +61,6 @@ mv tmp/2022_04_15_104321_update_users_table.php database/migrations/
 mv tmp/DatabaseSeeder.php database/seeders/
 mv tmp/User.php domain/Users/Models/
 
-mv tmp/vite.config.js /
 mv tmp/web.php routes/
 mv tmp/auth.php routes/
 mv tmp/admin.php routes/
@@ -76,7 +75,7 @@ mv tmp/phpstan.neon ./
 mv tmp/deploy.yml .github/workflows/deploy.yml
 
 sed -i 's/App\\Models\\User/\\Domain\\Users\\Models\\User/g' config/auth.php
-sed -i 's/npm run production/npm run prod-all/g' config/lasso.php
+sed -i 's/npm run production/npm run build/g' config/lasso.php
 sed -i 's/home//g' app/Providers/RouteServiceProvider.php
 
 echo -e "Installing \e[32mLaravel UI\e[0m & \e[32mBootstrap \e[0m"
@@ -121,7 +120,6 @@ mv lang resources/lang
 
 echo -e "Editing\e[32m vite.config.js\e[0m to work with our boilerplate"
 
-sed -i 's/HOSTNAME/'"$projectname"'/g' vite.config.js
 
 echo -e "Compiling assets"
 npm install bootstrap @popperjs/core jquery popper.js vite-plugin-static-copy  --save-dev
@@ -129,6 +127,11 @@ npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net
 
 npm add vue-template-compiler browser-sync browser-sync-webpack-plugin --save
 npm install
+
+mv tmp/vite.config.js ./
+sed -i 's/HOSTNAME/'"$projectname"'/g' vite.config.js
+
+npm run build
 
 rm tmp -rf
 
