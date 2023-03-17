@@ -68,6 +68,7 @@ mv tmp/admin.php routes/
 mv tmp/admin/AdminSeoMiddleware.php app/Admin/Middleware/
 mv tmp/admin/IsAdminMiddleware.php app/Admin/Middleware/
 mv tmp/admin/HomePageController.php app/Admin/Controllers/
+mv tmp/admin/AdminUsersController.php app/Admin/Controllers/
 mv tmp/common/Controller.php app/Common/Controllers/Controller.php
 mv tmp/auth/* app/Auth/Controllers/
 
