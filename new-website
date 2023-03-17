@@ -34,11 +34,17 @@ mkdir app/Common
 mkdir app/Common/Controllers
 mkdir domain/Users/
 mkdir domain/Users/Models/
+mkdir domain/Users/Actions/
+mkdir domain/Users/Notifications/
 mkdir app/Auth
 mkdir app/Auth/Controllers
 mkdir app/Admin
 mkdir app/Admin/Middleware
 mkdir app/Admin/Controllers
+mkdir app/Admin/Users
+mkdir app/Admin/Users/Controllers
+mkdir app/Admin/Users/Requests
+
 mkdir .github
 mkdir .github/workflows
 
@@ -68,7 +74,13 @@ mv tmp/admin.php routes/
 mv tmp/admin/AdminSeoMiddleware.php app/Admin/Middleware/
 mv tmp/admin/IsAdminMiddleware.php app/Admin/Middleware/
 mv tmp/admin/HomePageController.php app/Admin/Controllers/
-mv tmp/admin/AdminUsersController.php app/Admin/Controllers/
+
+mv tmp/admin/AdminUsersController.php app/Admin/Users/Controllers/
+mv tmp/admin/AdminUsersRequest.php app/Admin/Users/Requests/
+mv tmp/admin/StoreUserAdminAction.php domain/Users/Actions/
+mv tmp/admin/UpdateUserAdminAction.php domain/Users/Actions/
+mv tmp/admin/UserInvitationNotification.php domain/Users/Notifications/
+
 mv tmp/common/Controller.php app/Common/Controllers/Controller.php
 mv tmp/auth/* app/Auth/Controllers/
 
