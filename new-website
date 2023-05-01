@@ -76,7 +76,7 @@ mv tmp/admin/IsAdminMiddleware.php app/Admin/Middleware/
 mv tmp/admin/HomePageController.php app/Admin/Controllers/
 
 mv tmp/admin/AdminUsersController.php app/Admin/Users/Controllers/
-mv tmp/admin/AdminUsersRequest.php app/Admin/Users/Requests/
+mv tmp/admin/AdminUserRequest.php app/Admin/Users/Requests/
 mv tmp/admin/StoreUserAdminAction.php domain/Users/Actions/
 mv tmp/admin/UpdateUserAdminAction.php domain/Users/Actions/
 mv tmp/admin/UserInvitationNotification.php domain/Users/Notifications/
