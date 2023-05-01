@@ -135,8 +135,8 @@ echo -e "Editing\e[32m vite.config.js\e[0m to work with our boilerplate"
 
 
 echo -e "Compiling assets"
-npm install bootstrap @popperjs/core jquery popper.js vite-plugin-static-copy  --save-dev
-npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 jquery-validation select2 select2-bootstrap-5-theme sweetalert moment wowjs lozad trix toastr --save
+npm install bootstrap @popperjs/core jquery vite-plugin-static-copy  --save-dev
+npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 jquery-validation select2 select2-bootstrap-5-theme sweetalert moment lozad trix toastr --save
 
 npm add vue-template-compiler browser-sync browser-sync-webpack-plugin --save
 npm install
