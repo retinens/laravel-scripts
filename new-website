@@ -52,19 +52,19 @@ rm app/Http/Controllers -rf
 rm app/Models -rf
 
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel"
-composer require artesaos/seotools livewire/livewire doctrine/dbal laravelcollective/html spatie/laravel-data rap2hpoutre/laravel-log-viewer retinens/laravel-toastr --quiet
+composer require artesaos/seotools livewire/livewire doctrine/dbal laravelcollective/html rap2hpoutre/laravel-log-viewer retinens/laravel-toastr --quiet
 php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider" --quiet
 
-composer require laravel-lang/lang nunomaduro/larastan --dev --quiet
+composer require laravel-lang/lang --dev --quiet
 php artisan lang:add fr
 
-composer require league/flysystem-aws-s3-v3 "~3.0" sammyjo20/lasso --quiet
+composer require league/flysystem-aws-s3-v3 "~3.0" sammyjo20/lasso -W --quiet
 php artisan vendor:publish --tag=lasso-config
 
 git clone --depth=1 https://github.com/retinens/laravel-retinens-base-files tmp --quiet
 
 mv tmp/2022_04_15_104321_update_users_table.php database/migrations/
-mv tmp/DatabaseSeeder.php database/seeders/
+mv tmp/seeders/DatabaseSeeder.php database/seeders/
 mv tmp/User.php domain/Users/Models/
 
 mv tmp/web.php routes/
