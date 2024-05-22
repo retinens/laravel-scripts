@@ -45,18 +45,19 @@ mkdir app/Admin/Users
 mkdir app/Admin/Users/Controllers
 mkdir app/Admin/Users/Requests
 
-mkdir .github
-mkdir .github/workflows
-
 rm app/Http/Controllers -rf
 rm app/Models -rf
 
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel"
-composer require artesaos/seotools livewire/livewire doctrine/dbal laravelcollective/html rap2hpoutre/laravel-log-viewer retinens/laravel-toastr --quiet
-php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider" --quiet
+composer require artesaos/seotools doctrine/dbal spatie/laravel-html opcodesio/log-viewer spatie/laravel-medialibrary --quiet
+php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider"
+php artisan log-viewer:publish
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-config"
 
 composer require laravel-lang/lang --dev --quiet
 php artisan lang:add fr
+php artisan lang:add en
 
 composer require league/flysystem-aws-s3-v3 "~3.0" sammyjo20/lasso -W --quiet
 php artisan vendor:publish --tag=lasso-config
@@ -85,11 +86,10 @@ mv tmp/common/Controller.php app/Common/Controllers/Controller.php
 mv tmp/auth/* app/Auth/Controllers/
 
 mv tmp/phpstan.neon ./
-mv tmp/deploy.yml .github/workflows/deploy.yml
+#mv tmp/deploy.yml .github/workflows/deploy.yml
 
 sed -i 's/App\\Models\\User/\\Domain\\Users\\Models\\User/g' config/auth.php
 sed -i 's/npm run production/npm run build/g' config/lasso.php
-sed -i 's/home//g' app/Providers/RouteServiceProvider.php
 
 echo -e "Installing \e[32mLaravel UI\e[0m & \e[32mBootstrap \e[0m"
 composer require laravel/ui --quiet
