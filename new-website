@@ -97,14 +97,23 @@ php artisan ui bootstrap --quiet
 
 echo -e "Setting up your .env file"
 
+.env set MAIL_MAILER="smtp"
 .env set MAIL_HOST="0.0.0.0"
 .env set MAIL_PORT="1025"
 .env set MAIL_FROM_ADDRESS="test@""$projectname"".test"
+.env set DB_CONNECTION="mysql"
 .env set DB_DATABASE="$projectname"
 .env set DB_USERNAME="root"
 .env set DB_PASSWORD="root"
 .env set APP_URL="https://""$projectname"".test"
 .env set APP_NAME="$projectname"
+
+sed '/^#/d' .env >.env.tmp
+mv .env.tmp .env
+# all lines starting with AWS get removed
+sed -i '/^AWS/d' .env
+
+cp .env .env.example
 
 php "$RETINENS_SCRIPTS_FOLDER/updateComposerPSR4.php"
 
