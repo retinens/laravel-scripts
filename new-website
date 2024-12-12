@@ -153,7 +153,7 @@ echo -e "Installing \e[32mNPM\e[0m packages"
 mv tmp/vite.config.js ./
 sed -i 's/HOSTNAME/'"$projectname"'/g' vite.config.js
 
-npm install bootstrap popper.js jquery vite-plugin-static-copy sass --save-dev
+npm install bootstrap jquery vite-plugin-static-copy @popperjs/core  sass --save-dev
 npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 choices.js aos swiper alpinejs moment lozad trix toastr  --save
 
 
@@ -164,6 +164,8 @@ sed -i 's/Over 9000 Thousand!/'"$projectname"'/g' config/seotools.php
 sed -i 's/For those who helped create the Genki Dama/'"$projectname"'/g' config/seotools.php
 
 rm tmp -rf
+rm tailwind.config.js
+rm postcss.config.js
 
 echo -e "Setting up git repo"
 
@@ -179,6 +181,7 @@ echo "/public/mix-manifest.json" >>.gitignore
 echo "/.php\_cs.cache" >>.gitignore
 echo "/.lasso" >>.gitignore
 echo ".php-cs-fixer.cache" >>.gitignore
+echo ".editorconfig" >>.gitignore
 
 git add .
 git commit -m "Laravel Initial Project Setup" --quiet
