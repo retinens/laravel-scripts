@@ -3,6 +3,7 @@ RETINENS_SCRIPTS_FOLDER=$(cd $(dirname $0) && pwd)
 source $RETINENS_SCRIPTS_FOLDER/dotenv
 
 $RETINENS_SCRIPTS_FOLDER/check-updates
+$RETINENS_SCRIPTS_FOLDER/rename-git-default
 
 echo -e "\e[33m
 ██████  ███████ ████████ ██ ███    ██ ███████ ███    ██ ███████
@@ -19,7 +20,7 @@ read projectname
 
 #check if directory exists
 if [ -d "$projectname" ]; then
-  echo "\e[31mERROR \e[0m: $projectname directory already exists. Would you like to delete it? (y/n)"
+  echo "\n\e[31mERROR \e[0m:" "$projectname directory already exists. Would you like to delete it? (y/N)"
   read delete
   if [ "$delete" == "y" ]; then
     rm -rf "$projectname"
@@ -27,7 +28,6 @@ if [ -d "$projectname" ]; then
     echo "Exiting"
     exit
   fi
-  exit
 fi
 
 #creates laravel project
@@ -61,7 +61,12 @@ rm app/Models -rf
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel"
 composer require artesaos/seotools doctrine/dbal spatie/laravel-html laravel/horizon retinens/laravel-toastr opcodesio/log-viewer spatie/laravel-medialibrary --quiet
 php artisan horizon:install
+
 php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider"
+sed -i 's/It'\''s Over 9000!/'"$projectname"'/g' config/seotools.php
+sed -i 's/Over 9000 Thousand!/'"$projectname"'/g' config/seotools.php
+sed -i 's/For those who helped create the Genki Dama/'"$projectname"'/g' config/seotools.php
+
 php artisan log-viewer:publish
 php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
 php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-config"
@@ -110,6 +115,7 @@ php artisan ui bootstrap --quiet
 
 echo -e "Setting up your .env file"
 
+.env set APP_LOCALE="fr"
 .env set MAIL_MAILER="smtp"
 .env set MAIL_HOST="0.0.0.0"
 .env set MAIL_PORT="1025"
@@ -153,15 +159,10 @@ echo -e "Installing \e[32mNPM\e[0m packages"
 mv tmp/vite.config.js ./
 sed -i 's/HOSTNAME/'"$projectname"'/g' vite.config.js
 
-npm install bootstrap jquery vite-plugin-static-copy @popperjs/core  sass --save-dev
-npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 choices.js aos swiper alpinejs moment lozad trix toastr  --save
+npm install bootstrap jquery vite-plugin-static-copy @popperjs/core sass --save-dev
+npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 --save-dev
+npm install choices.js aos swiper alpinejs moment lozad trix toastr  --save-dev
 
-
-#in config/setools, change It's Over 9000! and Over 9000 Thousand! to your website name
-# also For those who helped create the Genki Dama
-sed -i 's/It'\''s Over 9000!/'"$projectname"'/g' config/seotools.php
-sed -i 's/Over 9000 Thousand!/'"$projectname"'/g' config/seotools.php
-sed -i 's/For those who helped create the Genki Dama/'"$projectname"'/g' config/seotools.php
 
 rm tmp -rf
 rm tailwind.config.js

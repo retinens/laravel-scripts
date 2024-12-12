@@ -4,7 +4,7 @@
 
 After creating a new bucket (Space) in DigitalOcean, do the following:
 
-1. Add the env variables to the .env file:
+Add the env variables to the .env file:
 ```diff
 DIGITALOCEAN_SPACES_KEY=##
 DIGITALOCEAN_SPACES_SECRET=##
@@ -14,7 +14,8 @@ DIGITALOCEAN_SPACES_REGION=ams3
 DIGITALOCEAN_SPACES_BUCKET={bucketName}
 DIGITALOCEAN_ROOT_FOLDER={folderName}
 ```
-2. Add the new disks in the config file (`config/filesystems.php`):
+
+Add the new disks in the config file (`config/filesystems.php`):
 ```diff
 'assets' => [
     'driver' => 's3',
@@ -38,9 +39,19 @@ DIGITALOCEAN_ROOT_FOLDER={folderName}
     'visibility' => 'public',
 ],
 
+```
+
+Change the config/lasso.php
+
+```diff
+'excluded_files' => [
+    'hot', 'site.webmanifest', "favicon.ico", "favicon-32x32.png", "favicon-16x16.png", "apple-touch-icon.png", "android-chrome-512x512.png", "android-chrome-192x192.png", "safari-pinned-tab.svg", "favicon.ico", "favicon-32x32.png", "favicon-16x16.png", "apple-touch-icon.png", "android-chrome-512x512.png", "android-chrome-192x192.png", "safari-pinned-tab.svg", "favicon.ico", "favicon-32x32.png", "favicon-16x16.png", "apple-touch-icon.png", "android-chrome-512x512.png", "android-chrome-192x192.png", "safari-pinned-tab.svg", "favicon.ico", "favicon-32x32.png", "favicon-16x16.png", "apple-touch-icon.png", "android-chrome-512x512.png", "android-chrome-192x192.png", "safari-pinned-tab.svg", "favicon.ico", "favicon-32x32.png", "favicon-16x16.png", "apple-touch-icon.png", "android-chrome-512x512.png", "android-chrome-192x192.png", "safari-pinned-tab.svg"
+],
+
+'excluded_directories' => [
+    "images", "vendor", 'fonts'
+],
 
 ```
-3. Change the {bucketName} in the `.github/workflows/deploy.yml` file (around line 83)
-4. Set the variables (DIGITALOCEAN_SPACES_KEY, DIGITALOCEAN_SPACES_SECRET, DEVELOP_WEBHOOK and PROD_WEBHOOK) in the Github repo so the automatic assets compilation will work.
 
 ##
