@@ -1,0 +1,202 @@
+#!/bin/bash
+RETINENS_SCRIPTS_FOLDER=$(cd $(dirname $0) && pwd)
+source $RETINENS_SCRIPTS_FOLDER/dotenv
+
+$RETINENS_SCRIPTS_FOLDER/check-updates
+$RETINENS_SCRIPTS_FOLDER/rename-git-default
+
+echo -e "\e[33m
+██████  ███████ ████████ ██ ███    ██ ███████ ███    ██ ███████
+██   ██ ██         ██    ██ ████   ██ ██      ████   ██ ██
+██████  █████      ██    ██ ██ ██  ██ █████   ██ ██  ██ ███████
+██   ██ ██         ██    ██ ██  ██ ██ ██      ██  ██ ██      ██
+██   ██ ███████    ██    ██ ██   ████ ███████ ██   ████ ███████
+\e[0m"
+
+#project name
+echo -e "New \e[33mLaravel\e[0m project script\n"
+echo -e "Project name ?"
+read projectname
+
+#check if directory exists
+if [ -d "$projectname" ]; then
+  echo "\n\e[31mERROR \e[0m: $projectname directory already exists. Would you like to delete it? (y/N)"
+  read delete
+  if [ "$delete" == "y" ]; then
+    rm -rf "$projectname"
+  else
+    echo "Exiting"
+    exit
+  fi
+fi
+
+#creates laravel project
+echo -e "\n\e[32mInstalling Laravel\e[0m in $projectname"
+composer create-project laravel/laravel "$projectname" --quiet
+cd "$projectname" || exit
+echo "$projectname" >README.md
+
+mkdir domain
+mkdir app/Common
+mkdir app/Common/Controllers
+mkdir domain/Users/
+mkdir domain/Users/Models/
+mkdir domain/Users/Actions/
+mkdir domain/Users/Notifications/
+mkdir app/Auth
+mkdir app/Auth/Controllers
+mkdir app/Admin
+mkdir app/Admin/Middleware
+mkdir app/Admin/Controllers
+mkdir app/Admin/Users
+mkdir app/Admin/Users/Controllers
+mkdir app/Admin/Users/Requests
+
+mkdir app/Website
+mkdir app/Website/Controllers
+
+rm app/Http/Controllers -rf
+rm app/Models -rf
+
+echo -e "Getting \e[32mbasic libraries\e[0m for Laravel"
+composer require artesaos/seotools doctrine/dbal spatie/laravel-html laravel/horizon retinens/laravel-toastr opcodesio/log-viewer spatie/laravel-medialibrary --quiet
+php artisan horizon:install
+php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider"
+php artisan log-viewer:publish
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-config"
+
+composer require laravel-lang/lang --dev --quiet
+php artisan lang:add fr
+php artisan lang:add en
+
+composer require league/flysystem-aws-s3-v3 "~3.0" sammyjo20/lasso -W --quiet
+php artisan vendor:publish --tag=lasso-config
+
+git clone --depth=1 https://github.com/retinens/laravel-retinens-base-files tmp --quiet
+
+mv tmp/2022_04_15_104321_update_users_table.php database/migrations/
+mv tmp/seeders/DatabaseSeeder.php database/seeders/
+mv tmp/User.php domain/Users/Models/
+
+mv tmp/web.php routes/
+mv tmp/auth.php routes/
+mv tmp/admin.php routes/
+
+mv tmp/admin/AdminSeoMiddleware.php app/Admin/Middleware/
+mv tmp/admin/IsAdminMiddleware.php app/Admin/Middleware/
+mv tmp/admin/HomePageController.php app/Admin/Controllers/
+
+mv tmp/admin/AdminUsersController.php app/Admin/Users/Controllers/
+mv tmp/admin/AdminUserRequest.php app/Admin/Users/Requests/
+mv tmp/admin/StoreUserAdminAction.php domain/Users/Actions/
+mv tmp/admin/UpdateUserAdminAction.php domain/Users/Actions/
+mv tmp/admin/UserInvitationNotification.php domain/Users/Notifications/
+
+mv tmp/app/HomePageController.php app/Website/Controllers/
+
+mv tmp/common/Controller.php app/Common/Controllers/Controller.php
+mv tmp/auth/* app/Auth/Controllers/
+
+mv tmp/phpstan.neon ./
+#mv tmp/deploy.yml .github/workflows/deploy.yml
+
+sed -i 's/App\\Models\\User/\\Domain\\Users\\Models\\User/g' config/auth.php
+sed -i 's/npm run production/npm run build/g' config/lasso.php
+
+echo -e "Installing \e[32mLaravel UI\e[0m & \e[32mBootstrap \e[0m"
+composer require laravel/ui --quiet
+php artisan ui bootstrap --quiet
+
+echo -e "Setting up your .env file"
+
+.env set MAIL_MAILER="smtp"
+.env set MAIL_HOST="0.0.0.0"
+.env set MAIL_PORT="1025"
+.env set MAIL_FROM_ADDRESS="test@""$projectname"".test"
+.env set DB_CONNECTION="mysql"
+.env set DB_DATABASE="$projectname"
+.env set DB_USERNAME="root"
+.env set DB_PASSWORD="root"
+.env set APP_URL="https://""$projectname"".test"
+.env set APP_NAME="$projectname"
+
+sed '/^#/d' .env >.env.tmp
+mv .env.tmp .env
+# all lines starting with AWS get removed
+sed -i '/^AWS/d' .env
+
+cp .env .env.example
+
+php "$RETINENS_SCRIPTS_FOLDER/updateComposerPSR4.php"
+
+echo -e "Setting up \e[32msass\e[0m boilerplate"
+mkdir resources/app
+rm resources/css -rf
+rm resources/js -rf
+rm resources/sass -rf
+#getting assets boilerplate
+mv tmp/resources/app resources/
+mv tmp/resources/admin resources/
+
+
+echo -e "Setting up \e[32mviews\e[0m boilerplate"
+rm resources/views -rf
+#getting views boiler plate
+mv tmp/resources/views resources/
+
+mv lang resources/lang
+
+echo -e "Editing\e[32m vite.config.js\e[0m to work with our boilerplate"
+
+echo -e "Installing \e[32mNPM\e[0m packages"
+mv tmp/vite.config.js ./
+sed -i 's/HOSTNAME/'"$projectname"'/g' vite.config.js
+
+npm install bootstrap jquery vite-plugin-static-copy @popperjs/core sass @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 choices.js aos swiper alpinejs moment lozad trix toastr  --save-dev
+
+
+#in config/setools, change It's Over 9000! and Over 9000 Thousand! to your website name
+# also For those who helped create the Genki Dama
+sed -i 's/It'\''s Over 9000!/'"$projectname"'/g' config/seotools.php
+sed -i 's/Over 9000 Thousand!/'"$projectname"'/g' config/seotools.php
+sed -i 's/For those who helped create the Genki Dama/'"$projectname"'/g' config/seotools.php
+
+rm tmp -rf
+rm tailwind.config.js
+rm postcss.config.js
+
+echo -e "Setting up git repo"
+
+git init
+git flow init -d
+
+echo "/public/app/" >>.gitignore
+echo "/public/backend/" >>.gitignore
+echo "/public/vendor" >>.gitignore
+echo "/public/fonts/vendor" >>.gitignore
+echo "/public/images/vendor" >>.gitignore
+echo "/public/mix-manifest.json" >>.gitignore
+echo "/.php\_cs.cache" >>.gitignore
+echo "/.lasso" >>.gitignore
+echo ".php-cs-fixer.cache" >>.gitignore
+echo ".editorconfig" >>.gitignore
+
+git add .
+git commit -m "Laravel Initial Project Setup" --quiet
+
+echo -e "\e[32mCreating now a repository on github\e[0m"
+
+composer dump-autoload --optimize --quiet
+
+gh repo create retinens/"$projectname" -y --private
+git remote add origin git@github.com:retinens/"$projectname".git
+git push origin develop --set-upstream
+
+echo -e "Setting up valet"
+valet db:create
+php artisan migrate:fresh --seed
+valet secure
+valet open
+xdg-open https://github.com/retinens/laravel-scripts/blob/master/afterCreatingWebsite.md
+exit
