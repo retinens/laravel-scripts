@@ -19,7 +19,14 @@ read projectname
 
 #check if directory exists
 if [ -d "$projectname" ]; then
-  echo "\e[31mERROR \e[0m: $projectname directory already exists."
+  echo "\e[31mERROR \e[0m: $projectname directory already exists. Would you like to delete it? (y/n)"
+  read delete
+  if [ "$delete" == "y" ]; then
+    rm -rf "$projectname"
+  else
+    echo "Exiting"
+    exit
+  fi
   exit
 fi
 
@@ -45,11 +52,15 @@ mkdir app/Admin/Users
 mkdir app/Admin/Users/Controllers
 mkdir app/Admin/Users/Requests
 
+mkdir app/Website
+mkdir app/Website/Controllers
+
 rm app/Http/Controllers -rf
 rm app/Models -rf
 
 echo -e "Getting \e[32mbasic libraries\e[0m for Laravel"
-composer require artesaos/seotools doctrine/dbal spatie/laravel-html opcodesio/log-viewer spatie/laravel-medialibrary --quiet
+composer require artesaos/seotools doctrine/dbal spatie/laravel-html laravel/horizon retinens/laravel-toastr opcodesio/log-viewer spatie/laravel-medialibrary --quiet
+php artisan horizon:install
 php artisan vendor:publish --provider="Artesaos\SEOTools\Providers\SEOToolsServiceProvider"
 php artisan log-viewer:publish
 php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
@@ -81,6 +92,8 @@ mv tmp/admin/AdminUserRequest.php app/Admin/Users/Requests/
 mv tmp/admin/StoreUserAdminAction.php domain/Users/Actions/
 mv tmp/admin/UpdateUserAdminAction.php domain/Users/Actions/
 mv tmp/admin/UserInvitationNotification.php domain/Users/Notifications/
+
+mv tmp/app/HomePageController.php app/Website/Controllers/
 
 mv tmp/common/Controller.php app/Common/Controllers/Controller.php
 mv tmp/auth/* app/Auth/Controllers/
@@ -122,44 +135,33 @@ mkdir resources/app
 rm resources/css -rf
 rm resources/js -rf
 rm resources/sass -rf
-#getting sass boilerplate
-git clone --depth=1 https://github.com/retinens/laravel-app-assets-boilerplate resources/app --quiet
-rm resources/app/.git -rf
-rm resources/app/.gitignore -rf
+#getting assets boilerplate
+mv tmp/resources/app resources/
+mv tmp/resources/admin resources/
 
-git clone --depth=1 https://github.com/retinens/laravel-admin-assets-boilerplate resources/admin --quiet
-rm resources/admin/.git -rf
-rm resources/admin/.gitignore -rf
 
 echo -e "Setting up \e[32mviews\e[0m boilerplate"
 rm resources/views -rf
 #getting views boiler plate
-git clone --depth=1 https://github.com/retinens/laravel-views-boilerplate resources/views --quiet
-rm resources/views/.git -rf
-rm resources/views/.gitignore -rf
+mv tmp/resources/views resources/
 
 mv lang resources/lang
 
 echo -e "Editing\e[32m vite.config.js\e[0m to work with our boilerplate"
 
-
-echo -e "Compiling assets"
-npm install bootstrap popper.js jquery vite-plugin-static-copy sass --save-dev
-npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 jquery-validation select2 select2-bootstrap-5-theme sweetalert moment lozad trix toastr  --save
-
-npm add vue-template-compiler browser-sync browser-sync-webpack-plugin --save
-npm install
-
+echo -e "Installing \e[32mNPM\e[0m packages"
 mv tmp/vite.config.js ./
 sed -i 's/HOSTNAME/'"$projectname"'/g' vite.config.js
+
+npm install bootstrap popper.js jquery vite-plugin-static-copy sass --save-dev
+npm install @themesberg/volt-bootstrap-5-dashboard datatables.net datatables.net-bs5 choices.js aos swiper alpinejs moment lozad trix toastr  --save
+
 
 #in config/setools, change It's Over 9000! and Over 9000 Thousand! to your website name
 # also For those who helped create the Genki Dama
 sed -i 's/It'\''s Over 9000!/'"$projectname"'/g' config/seotools.php
 sed -i 's/Over 9000 Thousand!/'"$projectname"'/g' config/seotools.php
 sed -i 's/For those who helped create the Genki Dama/'"$projectname"'/g' config/seotools.php
-
-npm run build
 
 rm tmp -rf
 
@@ -191,7 +193,7 @@ git push origin develop --set-upstream
 
 echo -e "Setting up valet"
 valet db:create
-php artisan migrate
+php artisan migrate:fresh --seed
 valet secure
 valet open
 xdg-open https://github.com/retinens/laravel-scripts/blob/master/afterCreatingWebsite.md
