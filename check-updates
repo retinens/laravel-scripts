@@ -1,8 +1,64 @@
 #!/bin/bash
-DIR=$(cd $(dirname $0) && pwd)
-cd $DIR
-git update-index -q --refresh
-if ! git diff-index --quiet HEAD --; then
-  echo "Updating the script"
-  git pull
+# Script to check for updates in a git repository and update if necessary
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# Determine script directory (works even with symlinks)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Navigate to script directory
+cd "$SCRIPT_DIR" || {
+  echo -e "\e[31mERROR:\e[0m Failed to navigate to script directory at $SCRIPT_DIR"
+  exit 1
+}
+
+# Check if current directory is a git repository
+if [ ! -d ".git" ]; then
+  echo -e "\e[33mWarning:\e[0m Not a git repository. Skipping update check."
+  exit 0
 fi
+
+# Ensure git index is up to date
+git update-index -q --refresh
+
+# Check if there are uncommitted changes
+if ! git diff-index --quiet HEAD --; then
+  echo -e "\e[33mWarning:\e[0m Local changes detected. Cannot update automatically."
+  echo "Please commit or stash your changes before updating."
+  exit 0
+fi
+
+# Check if current branch is behind remote
+git fetch -q origin 2>/dev/null || {
+  echo -e "\e[33mWarning:\e[0m Unable to fetch from remote repository."
+  echo "Skipping update check. Check your network connection."
+  exit 0
+}
+
+LOCAL=$(git rev-parse @)
+REMOTE=$(git rev-parse @{u} 2>/dev/null || echo "$LOCAL")
+
+if [ "$LOCAL" != "$REMOTE" ]; then
+  echo -e "\e[32mUpdating the script...\e[0m"
+  if git pull; then
+    echo -e "\e[32mUpdate successful!\e[0m"
+  else
+    echo -e "\e[31mERROR:\e[0m Update failed. Please check for conflicts."
+    exit 1
+  fi
+else
+  echo -e "\e[32mAlready up to date.\e[0m"
+fi
+
+# Run script 'r' if it exists and is executable
+if [ -x "$SCRIPT_DIR/r" ]; then
+  "$SCRIPT_DIR/r"
+elif [ -f "$SCRIPT_DIR/r" ]; then
+  echo -e "\e[33mWarning:\e[0m Script 'r' exists but is not executable."
+  echo "Consider running: chmod +x $SCRIPT_DIR/r"
+else
+  echo -e "\e[33mWarning:\e[0m Script 'r' not found in $SCRIPT_DIR"
+fi
+
+exit 0

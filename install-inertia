@@ -1,0 +1,13 @@
+#!/bin/bash
+RETINENS_SCRIPTS_FOLDER=$(cd $(dirname $0) && pwd)
+source $RETINENS_SCRIPTS_FOLDER/dotenv
+
+$RETINENS_SCRIPTS_FOLDER/check-updates
+$RETINENS_SCRIPTS_FOLDER/rename-git-default
+
+composer require inertiajs/inertia-laravel
+composer require tightenco/ziggy
+
+php artisan inertia:middleware
+
+npm i vue primevue @inertiajs/vue3 @vitejs/plugin-vue vue3-perfect-scrollbar @primevue/themes primelocale vue-i18n
