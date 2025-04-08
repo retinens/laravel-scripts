@@ -22,12 +22,6 @@ fi
 # Ensure git index is up to date
 git update-index -q --refresh
 
-# Check if there are uncommitted changes
-if ! git diff-index --quiet HEAD --; then
-  echo -e "\e[33mWarning:\e[0m Local changes detected. Cannot update automatically."
-  echo "Please commit or stash your changes before updating."
-  exit 0
-fi
 
 # Check if current branch is behind remote
 git fetch -q origin 2>/dev/null || {
@@ -49,16 +43,6 @@ if [ "$LOCAL" != "$REMOTE" ]; then
   fi
 else
   echo -e "\e[32mAlready up to date.\e[0m"
-fi
-
-# Run script 'r' if it exists and is executable
-if [ -x "$SCRIPT_DIR/r" ]; then
-  "$SCRIPT_DIR/r"
-elif [ -f "$SCRIPT_DIR/r" ]; then
-  echo -e "\e[33mWarning:\e[0m Script 'r' exists but is not executable."
-  echo "Consider running: chmod +x $SCRIPT_DIR/r"
-else
-  echo -e "\e[33mWarning:\e[0m Script 'r' not found in $SCRIPT_DIR"
 fi
 
 exit 0

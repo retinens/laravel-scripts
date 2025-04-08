@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e # Exit immediately if a command exits with a non-zero status
 
+# Request sudo privileges at the beginning
+# This will prompt for password and maintain sudo privileges throughout the script
+echo "This script requires sudo privileges. Please enter your password if prompted."
+sudo -v
+
 # Determine script directory (works even with symlinks)
 SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -56,27 +61,6 @@ check_dependencies() {
 }
 
 # Get valid project name
-get_project_name() {
-  local name=""
-  local valid=false
-
-  while [ "$valid" != true ]; do
-    echo -e "Project name? (alphanumeric and dashes only)"
-    read -r name
-
-    # Validate project name (alphanumeric and dashes only)
-    if [[ ! "$name" =~ ^[a-zA-Z0-9-]+$ ]]; then
-      echo -e "\e[31mERROR:\e[0m Project name must contain only letters, numbers, and dashes."
-    elif [[ -z "$name" ]]; then
-      echo -e "\e[31mERROR:\e[0m Project name cannot be empty."
-    else
-      valid=true
-    fi
-  done
-
-  echo "$name"
-}
-
 # Check if directory exists and handle appropriately
 check_directory() {
   local dir="$1"
@@ -88,13 +72,13 @@ check_directory() {
       echo -e "Checking if GitHub repository exists..."
       if gh repo view "retinens/$dir" &> /dev/null; then
         echo -e "Deleting GitHub repository retinens/$dir..."
-        if ! gh repo delete "retinens/$dir" -y; then
+        if ! gh repo delete "retinens/$dir" --yes; then
           echo -e "\e[31mERROR:\e[0m Failed to delete GitHub repository."
           exit 1
         fi
       fi
       echo -e "Removing local directory $dir..."
-      rm -rf "$dir"
+      sudo rm -rf "$dir"
     else
       echo "Exiting"
       exit 0
@@ -133,17 +117,19 @@ create_repository() {
 setup_project() {
   echo -e "\n\e[33mSetting up\e[0m Laravel project..."
 
-  echo -e "Installing Composer dependencies..."
-  if ! composer install; then
-    echo -e "\e[31mERROR:\e[0m Failed to install Composer dependencies."
-    exit 1
-  fi
-
   echo -e "Copying .env.example to .env..."
   if ! cp .env.example .env; then
     echo -e "\e[31mERROR:\e[0m Failed to copy .env.example to .env."
     exit 1
   fi
+
+  echo -e "Installing Composer dependencies..."
+  if ! composer install --no-interaction --quiet --no-progress; then
+    echo -e "\e[31mERROR:\e[0m Failed to install Composer dependencies."
+    exit 1
+  fi
+
+
 
   echo -e "Generating application key..."
   if ! php artisan key:generate; then
@@ -152,13 +138,13 @@ setup_project() {
   fi
 
   echo -e "Installing npm packages..."
-  if ! npm install; then
+  if ! npm install --silent; then
     echo -e "\e[31mERROR:\e[0m Failed to install npm packages."
     exit 1
   fi
 
   echo -e "Building assets..."
-  if ! npm run build; then
+  if ! npm run build --silent; then
     echo -e "\e[31mERROR:\e[0m Failed to build assets."
     exit 1
   fi
@@ -212,18 +198,31 @@ open_docs() {
   fi
 }
 
+# Keep sudo privileges alive throughout script execution
+refresh_sudo() {
+  while true; do
+    sudo -n true
+    sleep 60
+    kill -0 "$" || exit
+  done 2>/dev/null &
+}
+
 # Main function
 main() {
   display_banner
   load_env
   check_dependencies
+  
+  # Start sudo refresh in background after user has seen the banner
+  refresh_sudo
 
   # Run utility scripts
   run_utility "check-updates"
   run_utility "rename-git-default"
 
-  # Get project information
-  projectname=$(get_project_name)
+  echo -n "Project name? (alphanumeric and dashes only): "  # Use echo -n to keep cursor on same line
+  read -r projectname
+
 
   # Check if directory exists
   check_directory "$projectname"
